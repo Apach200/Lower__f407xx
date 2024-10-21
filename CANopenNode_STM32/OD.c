@@ -294,8 +294,8 @@ OD_ATTR_PERSIST_COMM OD_PERSIST_COMM_t OD_PERSIST_COMM = {
     .x6001_nucleo_VAR32_6001 = 0xA8C467AA,
     .x6002_nucleo_VAR64_6002 = 0x00000000CEBA1234,
     .x6003_nucleo_VAR32_6003 = 0xABCD1234,
-    .x6038_nucleo_Array_sub0 = 0x0C,
-    .x6038_nucleo_Array = {0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xBBBB, 0xCCCC}
+    .x6038_nucleo_Array_sub0 = 0x0F,
+    .x6038_nucleo_Array = {0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xF234}
 };
 
 OD_ATTR_RAM OD_RAM_t OD_RAM = {
@@ -1820,7 +1820,7 @@ static OD_ATTR_OD OD_entry_t ODList[] = {
     {0x6001, 0x01, ODT_VAR, &ODObjs.o_6001_nucleo_VAR32_6001, NULL},
     {0x6002, 0x01, ODT_VAR, &ODObjs.o_6002_nucleo_VAR64_6002, NULL},
     {0x6003, 0x01, ODT_VAR, &ODObjs.o_6003_nucleo_VAR32_6003, NULL},
-    {0x6038, 0x0D, ODT_ARR, &ODObjs.o_6038_nucleo_Array, NULL},
+    {0x6038, 0x10, ODT_ARR, &ODObjs.o_6038_nucleo_Array, NULL},
     {0x0000, 0x00, 0, NULL, NULL}
 };
 

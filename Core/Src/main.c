@@ -318,6 +318,9 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+   canopen_app_process();
+
 	  read_SDO (
 			    canOpenNodeSTM32.canOpenStack->SDOclient,
 			  	103,										//remote desiredNodeID
@@ -382,7 +385,7 @@ int main(void)
 
 				OD_PERSIST_COMM.x6000_nucleo_VAR32_6000++;
 
-				tmp32u_0 = OD_PERSIST_COMM.x6000_nucleo_VAR32_6000++;
+				tmp32u_0 = OD_PERSIST_COMM.x6000_nucleo_VAR32_6000;
 
 				//CO_TPDOsendRequest(&canOpenNodeSTM32.canOpenStack->TPDO[0] );
 
