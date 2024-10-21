@@ -23,6 +23,7 @@
 "./CANopenNode_STM32/CO_app_STM32.o"
 "./CANopenNode_STM32/CO_driver_STM32.o"
 "./CANopenNode_STM32/CO_storageBlank.o"
+"./CANopenNode_STM32/OD.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32f4xx_hal_msp.o"
 "./Core/Src/stm32f4xx_it.o"

@@ -13,6 +13,12 @@
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
+  *
+  *			LOWER__PCBmodul__STM32_F4VE_V2.0-2
+  *
+  *			NodeID = 072
+  *
+  *
   ******************************************************************************
   */
 /* USER CODE END Header */
@@ -35,7 +41,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define TerminalInterface	huart1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -58,7 +64,7 @@ DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
-uint8_t Tx_Array[16]={0x51,0x62,0x73,0x84,0x55,0x46,0x87,0x18,0x29,0x10,0x11,0x12,0x13,0x14,0x15,0x33};
+uint8_t Tx_Array[16]={0x5a,0x6b,0x7c,0x86,0x5f,0x43,0x8e,0x58,0x69,0x70,0x81,0x92,0xf3,0xc4,0xc5,0xc3};
 uint8_t Rx_Array[16]={0};
 uint32_t Array_32u[16]={0};
 uint8_t Array_8u[16]={0x54,0x34,0x21,0xea,0xf3,0x7a,0xd4,0x46};
@@ -73,7 +79,7 @@ uint32_t            tmp32u_0   = 0x0e0f0a0b;
 uint64_t            tmp64u_0   = 0x0e1f1a1b56789a;
 uint64_t            tmp64u_1   = 0x0e1f1a1b56789a;
 uint32_t            Ticks;
-char String_0[]={"String_for_Test_UART"};
+char String_L[]={"String_for_Test_UART_"};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -266,15 +272,17 @@ int main(void)
    */
 
 //  HAL_Delay(500);
-//  HAL_UART_Transmit_DMA( &huart2, (uint8_t*)(String_0), 10);
+//  Local_Count = sizeof String_L;
+//  String_L[Local_Count-1] = 0x0d;
+//  HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)(String_L), Local_Count);
 //  while (1){}
- #if 0
+ #if 1
   Tx_Header.IDE    = CAN_ID_STD;
   Tx_Header.ExtId  = 0;
   Tx_Header.DLC    = 8;
   Tx_Header.StdId  = 0x7EC;
   Tx_Header.RTR    = CAN_RTR_DATA;
-  HAL_CAN_Start(&hcan);  HAL_Delay(1500);
+  HAL_CAN_Start(&hcan1);  HAL_Delay(1500);
 
   if(HAL_CAN_AddTxMessage( &hcan1,
     		               &Tx_Header,
@@ -284,7 +292,7 @@ int main(void)
 	  //while(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) != 3) {}
 		  for(uint8_t cnt=0;cnt<22;cnt++)
 		  {
-		   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+		   HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);//LED2_Pin
 		   HAL_Delay(46);
 		  }
 	  }
@@ -292,18 +300,22 @@ int main(void)
 
   for(uint8_t cnt=0;cnt<50;cnt++)
   {
-	  	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6 );
-	  	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7 );
+	  	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6 );//LED1_Pin___//LED1_GPIO_Port
+	  	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7 );//LED2_Pin___//LED2_GPIO_Port
   HAL_Delay(33);
   }
-
+    HAL_Delay(500);
+    Local_Count = sizeof String_L;
+    String_L[Local_Count-1] = 0x0d;
+    HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)(String_L), Local_Count);
+    while (1){}
   // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET); HAL_Delay(2500);//off
 
    CANopenNodeSTM32 canOpenNodeSTM32;
    canOpenNodeSTM32.CANHandle = &hcan1;
    canOpenNodeSTM32.HWInitFunction = MX_CAN1_Init;
    canOpenNodeSTM32.timerHandle = &htim4;
-   canOpenNodeSTM32.desiredNodeID = 0x47;			//0x48
+   canOpenNodeSTM32.desiredNodeID = 0x48;			//072
    canOpenNodeSTM32.baudrate = 125*4;
    canopen_app_init(&canOpenNodeSTM32);
   /* USER CODE END 2 */
@@ -321,9 +333,8 @@ int main(void)
 
 	  HAL_Delay(100);
 
-		huart2.gState = HAL_UART_STATE_READY;
-		HAL_UART_Transmit_DMA( &huart2, (uint8_t*)Rx_Array, 8);
-
+	  	TerminalInterface.gState = HAL_UART_STATE_READY;
+		HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)Rx_Array, 8);
 
 
 	  write_SDO(
@@ -348,10 +359,9 @@ int main(void)
 
 	  HAL_Delay(100);
 
-		huart2.gState = HAL_UART_STATE_READY;
-		HAL_UART_Transmit_DMA( &huart2, (uint8_t*)Rx_Array, 8);
-
-		HAL_Delay(100);
+	  TerminalInterface.gState = HAL_UART_STATE_READY;
+	  HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)Rx_Array, 8);
+      HAL_Delay(100);
 
 
 		  OD_PERSIST_COMM.x6000_nucleo_VAR32_6000=0;
@@ -366,8 +376,8 @@ int main(void)
 			if(tmp32u_1 != OD_PERSIST_COMM.x6001_nucleo_VAR32_6001)
 				{
 				tmp32u_1 = OD_PERSIST_COMM.x6001_nucleo_VAR32_6001;
-				huart2.gState = HAL_UART_STATE_READY;
-				HAL_UART_Transmit_DMA( &huart2, (uint8_t*)(&tmp32u_1), 4);
+				TerminalInterface.gState = HAL_UART_STATE_READY;
+				HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)(&tmp32u_1), 4);
 				}
 
 
@@ -381,8 +391,8 @@ int main(void)
 
 				CO_TPDOsendRequest(&canOpenNodeSTM32.canOpenStack->TPDO[0] );
 
-				huart2.gState = HAL_UART_STATE_READY;
-				HAL_UART_Transmit_DMA( &huart2, (uint8_t*)( &tmp32u_0 ), 4);
+				TerminalInterface.gState = HAL_UART_STATE_READY;
+				HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)( &tmp32u_0 ), 4);
 
 				Local_Count++;
 				Local_Count = Local_Count%4;
