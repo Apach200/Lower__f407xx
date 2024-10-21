@@ -16,14 +16,14 @@
 
         Created:      23.11.2020 16:00:00
         Created By:   
-        Modified:     21.10.2024 12:11:21
+        Modified:     21.10.2024 20:18:14
         Modified By:  
 
     Device Info:
         Vendor Name:  
         Vendor ID:    
-        Product Name: Disco_F407
-        Product ID:   0x47
+        Product Name: Nucleo_F072
+        Product ID:   0x072
 
         Description:  
 *******************************************************************************/

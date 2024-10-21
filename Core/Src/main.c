@@ -51,7 +51,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 CAN_HandleTypeDef hcan1;
-CAN_HandleTypeDef hcan2;
 
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim14;
@@ -87,7 +86,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_TIM14_Init(void);
-static void MX_CAN2_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
@@ -103,6 +101,7 @@ void
 HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
     if (htim == canopenNodeSTM32->timerHandle) {
         canopen_app_interrupt();
+
     }
 }
 
@@ -252,7 +251,6 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_TIM14_Init();
-  MX_CAN2_Init();
   MX_CAN1_Init();
   MX_USART1_UART_Init();
   MX_USB_DEVICE_Init();
@@ -276,7 +274,7 @@ int main(void)
 //  String_L[Local_Count-1] = 0x0d;
 //  HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)(String_L), Local_Count);
 //  while (1){}
- #if 1
+ #if 0
   Tx_Header.IDE    = CAN_ID_STD;
   Tx_Header.ExtId  = 0;
   Tx_Header.DLC    = 8;
@@ -292,24 +290,20 @@ int main(void)
 	  //while(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) != 3) {}
 		  for(uint8_t cnt=0;cnt<22;cnt++)
 		  {
-		   HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);//LED2_Pin
+		   HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);//LED2_Pin//yellow
 		   HAL_Delay(46);
 		  }
 	  }
 #endif
 
-  for(uint8_t cnt=0;cnt<50;cnt++)
+  for(uint8_t cnt=0;cnt<25;cnt++)
   {
-	  	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6 );//LED1_Pin___//LED1_GPIO_Port
-	  	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7 );//LED2_Pin___//LED2_GPIO_Port
+	  	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7 );//LED2_Pin___//LED2_GPIO_Port//yellow
+	  	//HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6 );//LED1_Pin___//LED1_GPIO_Port//green
   HAL_Delay(33);
   }
-    HAL_Delay(500);
-    Local_Count = sizeof String_L;
-    String_L[Local_Count-1] = 0x0d;
-    HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)(String_L), Local_Count);
-    while (1){}
-  // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET); HAL_Delay(2500);//off
+
+   HAL_TIM_Base_Start_IT(&htim4);
 
    CANopenNodeSTM32 canOpenNodeSTM32;
    canOpenNodeSTM32.CANHandle = &hcan1;
@@ -318,6 +312,8 @@ int main(void)
    canOpenNodeSTM32.desiredNodeID = 0x48;			//072
    canOpenNodeSTM32.baudrate = 125*4;
    canopen_app_init(&canOpenNodeSTM32);
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -336,7 +332,6 @@ int main(void)
 	  	TerminalInterface.gState = HAL_UART_STATE_READY;
 		HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)Rx_Array, 8);
 
-
 	  write_SDO(
 			    canOpenNodeSTM32.canOpenStack->SDOclient,
 			  	103,										//remote desiredNodeID
@@ -346,7 +341,6 @@ int main(void)
 				4);
 
 	  HAL_Delay(100);
-
 
 	  read_SDO (
 			    canOpenNodeSTM32.canOpenStack->SDOclient,
@@ -363,22 +357,23 @@ int main(void)
 	  HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)Rx_Array, 8);
       HAL_Delay(100);
 
-
+		Local_Count=0;
 		  OD_PERSIST_COMM.x6000_nucleo_VAR32_6000=0;
 
 		  while (1)
 		  {
-			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5  , canOpenNodeSTM32.outStatusLEDGreen);//включение
-			  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13 ,!canOpenNodeSTM32.outStatusLEDRed  );//включение с инверсией
+			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, !canOpenNodeSTM32.outStatusLEDGreen);
+			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, !canOpenNodeSTM32.outStatusLEDRed  );//yellow
+//		         HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6 );//LED1_Pin___//LED1_GPIO_Port//green
 
 			canopen_app_process();
 
-			if(tmp32u_1 != OD_PERSIST_COMM.x6001_nucleo_VAR32_6001)
-				{
-				tmp32u_1 = OD_PERSIST_COMM.x6001_nucleo_VAR32_6001;
-				TerminalInterface.gState = HAL_UART_STATE_READY;
-				HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)(&tmp32u_1), 4);
-				}
+//			if(tmp32u_1 != OD_PERSIST_COMM.x6001_nucleo_VAR32_6001)
+//				{
+//				tmp32u_1 = OD_PERSIST_COMM.x6001_nucleo_VAR32_6001;
+//				TerminalInterface.gState = HAL_UART_STATE_READY;
+//				HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)(&tmp32u_1), 4);
+//				}
 
 
 			  if(HAL_GetTick() - Ticks>749)
@@ -389,7 +384,7 @@ int main(void)
 
 				tmp32u_0 = OD_PERSIST_COMM.x6000_nucleo_VAR32_6000++;
 
-				CO_TPDOsendRequest(&canOpenNodeSTM32.canOpenStack->TPDO[0] );
+				//CO_TPDOsendRequest(&canOpenNodeSTM32.canOpenStack->TPDO[0] );
 
 				TerminalInterface.gState = HAL_UART_STATE_READY;
 				HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)( &tmp32u_0 ), 4);
@@ -494,43 +489,6 @@ static void MX_CAN1_Init(void)
 }
 
 /**
-  * @brief CAN2 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_CAN2_Init(void)
-{
-
-  /* USER CODE BEGIN CAN2_Init 0 */
-
-  /* USER CODE END CAN2_Init 0 */
-
-  /* USER CODE BEGIN CAN2_Init 1 */
-
-  /* USER CODE END CAN2_Init 1 */
-  hcan2.Instance = CAN2;
-  hcan2.Init.Prescaler = 21;
-  hcan2.Init.Mode = CAN_MODE_NORMAL;
-  hcan2.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan2.Init.TimeSeg1 = CAN_BS1_13TQ;
-  hcan2.Init.TimeSeg2 = CAN_BS2_2TQ;
-  hcan2.Init.TimeTriggeredMode = DISABLE;
-  hcan2.Init.AutoBusOff = DISABLE;
-  hcan2.Init.AutoWakeUp = DISABLE;
-  hcan2.Init.AutoRetransmission = DISABLE;
-  hcan2.Init.ReceiveFifoLocked = DISABLE;
-  hcan2.Init.TransmitFifoPriority = DISABLE;
-  if (HAL_CAN_Init(&hcan2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN CAN2_Init 2 */
-
-  /* USER CODE END CAN2_Init 2 */
-
-}
-
-/**
   * @brief TIM4 Initialization Function
   * @param None
   * @retval None
@@ -549,7 +507,7 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 83;
+  htim4.Init.Prescaler = 167;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim4.Init.Period = 999;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -591,7 +549,7 @@ static void MX_TIM14_Init(void)
 
   /* USER CODE END TIM14_Init 1 */
   htim14.Instance = TIM14;
-  htim14.Init.Prescaler = 83;
+  htim14.Init.Prescaler = 167;
   htim14.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim14.Init.Period = 999;
   htim14.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -718,7 +676,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED1_Pin|LED2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED1_Pin|LED2_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin, GPIO_PIN_RESET);
@@ -754,6 +712,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB5 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF9_CAN2;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
