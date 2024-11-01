@@ -7,7 +7,12 @@ CANOpen at STM32F407
 
 
 Реализовано CAN-устройство на STM32F4X-DISCOVERY from Aliexpress Green color.
-Сеть состоит из устройств из проектов Disco407_Blue, Aliex_Disco407green.
+
+Сеть состоит из устройств из проектов 
+Disco407_Blue,
+Aliex_Disco407green,
+two EvolutionBoard from Aliexpress BLACK color STM32F4XX LOWER PCB at mezzanine.
+two EvolutionBoard from Aliexpress BLACK color STM32F4XX UPPER PCB at mezzanine.
 
 
 
