@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>0_F407</name>
+	<name>Lower__f407xx</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -29,16 +29,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>CANopenNode</name>
-			<type>2</type>
-			<location>D:/0_F407/CANopenNode</location>
-		</link>
-		<link>
-			<name>CANopenNode_STM32</name>
-			<type>2</type>
-			<location>D:/0_F407/CANopenNode_STM32</location>
-		</link>
-	</linkedResources>
 </projectDescription>

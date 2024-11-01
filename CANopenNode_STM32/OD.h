@@ -16,14 +16,14 @@
 
         Created:      23.11.2020 16:00:00
         Created By:   
-        Modified:     21.10.2024 23:58:51
+        Modified:     01.11.2024 19:54:43
         Modified By:  
 
     Device Info:
-        Vendor Name:  
-        Vendor ID:    
-        Product Name: Nucleo_F072
-        Product ID:   0x072
+        Vendor Name:  Chromos_A
+        Vendor ID:    0xAFFEFFd
+        Product Name: Lower__f407xx
+        Product ID:   0x3c
 
         Description:  
 *******************************************************************************/
