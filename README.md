@@ -1,5 +1,6 @@
-# Aliex_Disco407green
-EvolutionBoard STM32F4X-DISCOVERY from Aliexpress Green color.
+# Lower_F407XX
+EvolutionBoard STM32F4XX  from Aliexpress BLACK color.
+LOWER PCB at mezzanine 
 CANOpen at STM32F407
 
 Проект выполнен в среде STM32CubeIDE
