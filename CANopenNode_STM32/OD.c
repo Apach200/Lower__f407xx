@@ -290,12 +290,12 @@ OD_ATTR_PERSIST_COMM OD_PERSIST_COMM_t OD_PERSIST_COMM = {
         .applicationObject7 = 0x00000000,
         .applicationObject8 = 0x00000000
     },
-    .x6000_nucleo_VAR32_6000 = 0x00000000,
-    .x6001_nucleo_VAR32_6001 = 0xA8C467AA,
-    .x6002_nucleo_VAR64_6002 = 0x00000000CEBA1234,
-    .x6003_nucleo_VAR32_6003 = 0xABCD1234,
-    .x6038_nucleo_Array_sub0 = 0x0F,
-    .x6038_nucleo_Array = {0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xF234}
+    .x6000_lowerF_VAR32_6000 = 0x00000000,
+    .x6001_lowerF_VAR32_6001 = 0xA8C467AA,
+    .x6002_lowerF_VAR64_6002 = 0x00000000CEBA1234,
+    .x6003_lowerF_VAR32_6003 = 0xABCD1234,
+    .x6038_lowerF_Array_sub0 = 0x0F,
+    .x6038_lowerF_Array = {0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666, 0x7777, 0x8888, 0x9999, 0xAAAA, 0xBBBB, 0xCCCC, 0xDDDD, 0xEEEE, 0xF234}
 };
 
 OD_ATTR_RAM OD_RAM_t OD_RAM = {
@@ -360,11 +360,11 @@ typedef struct {
     OD_obj_record_t o_1A09_TPDOMappingParameter[9];
     OD_obj_record_t o_1A0A_TPDOMappingParameter[9];
     OD_obj_record_t o_1A0B_TPDOMappingParameter[9];
-    OD_obj_var_t o_6000_nucleo_VAR32_6000;
-    OD_obj_var_t o_6001_nucleo_VAR32_6001;
-    OD_obj_var_t o_6002_nucleo_VAR64_6002;
-    OD_obj_var_t o_6003_nucleo_VAR32_6003;
-    OD_obj_array_t o_6038_nucleo_Array;
+    OD_obj_var_t o_6000_lowerF_VAR32_6000;
+    OD_obj_var_t o_6001_lowerF_VAR32_6001;
+    OD_obj_var_t o_6002_lowerF_VAR64_6002;
+    OD_obj_var_t o_6003_lowerF_VAR32_6003;
+    OD_obj_array_t o_6038_lowerF_Array;
 } ODObjs_t;
 
 static CO_PROGMEM ODObjs_t ODObjs = {
@@ -1738,29 +1738,29 @@ static CO_PROGMEM ODObjs_t ODObjs = {
             .dataLength = 4
         }
     },
-    .o_6000_nucleo_VAR32_6000 = {
-        .dataOrig = &OD_PERSIST_COMM.x6000_nucleo_VAR32_6000,
+    .o_6000_lowerF_VAR32_6000 = {
+        .dataOrig = &OD_PERSIST_COMM.x6000_lowerF_VAR32_6000,
         .attribute = ODA_SDO_RW | ODA_TPDO | ODA_MB,
         .dataLength = 4
     },
-    .o_6001_nucleo_VAR32_6001 = {
-        .dataOrig = &OD_PERSIST_COMM.x6001_nucleo_VAR32_6001,
+    .o_6001_lowerF_VAR32_6001 = {
+        .dataOrig = &OD_PERSIST_COMM.x6001_lowerF_VAR32_6001,
         .attribute = ODA_SDO_RW | ODA_RPDO | ODA_MB,
         .dataLength = 4
     },
-    .o_6002_nucleo_VAR64_6002 = {
-        .dataOrig = &OD_PERSIST_COMM.x6002_nucleo_VAR64_6002,
+    .o_6002_lowerF_VAR64_6002 = {
+        .dataOrig = &OD_PERSIST_COMM.x6002_lowerF_VAR64_6002,
         .attribute = ODA_SDO_RW | ODA_TPDO | ODA_MB,
         .dataLength = 8
     },
-    .o_6003_nucleo_VAR32_6003 = {
-        .dataOrig = &OD_PERSIST_COMM.x6003_nucleo_VAR32_6003,
+    .o_6003_lowerF_VAR32_6003 = {
+        .dataOrig = &OD_PERSIST_COMM.x6003_lowerF_VAR32_6003,
         .attribute = ODA_SDO_RW | ODA_TPDO | ODA_MB,
         .dataLength = 4
     },
-    .o_6038_nucleo_Array = {
-        .dataOrig0 = &OD_PERSIST_COMM.x6038_nucleo_Array_sub0,
-        .dataOrig = &OD_PERSIST_COMM.x6038_nucleo_Array[0],
+    .o_6038_lowerF_Array = {
+        .dataOrig0 = &OD_PERSIST_COMM.x6038_lowerF_Array_sub0,
+        .dataOrig = &OD_PERSIST_COMM.x6038_lowerF_Array[0],
         .attribute0 = ODA_SDO_R | ODA_TPDO,
         .attribute = ODA_SDO_RW | ODA_TPDO | ODA_MB,
         .dataElementLength = 2,
@@ -1816,11 +1816,11 @@ static OD_ATTR_OD OD_entry_t ODList[] = {
     {0x1A09, 0x09, ODT_REC, &ODObjs.o_1A09_TPDOMappingParameter, NULL},
     {0x1A0A, 0x09, ODT_REC, &ODObjs.o_1A0A_TPDOMappingParameter, NULL},
     {0x1A0B, 0x09, ODT_REC, &ODObjs.o_1A0B_TPDOMappingParameter, NULL},
-    {0x6000, 0x01, ODT_VAR, &ODObjs.o_6000_nucleo_VAR32_6000, NULL},
-    {0x6001, 0x01, ODT_VAR, &ODObjs.o_6001_nucleo_VAR32_6001, NULL},
-    {0x6002, 0x01, ODT_VAR, &ODObjs.o_6002_nucleo_VAR64_6002, NULL},
-    {0x6003, 0x01, ODT_VAR, &ODObjs.o_6003_nucleo_VAR32_6003, NULL},
-    {0x6038, 0x10, ODT_ARR, &ODObjs.o_6038_nucleo_Array, NULL},
+    {0x6000, 0x01, ODT_VAR, &ODObjs.o_6000_lowerF_VAR32_6000, NULL},
+    {0x6001, 0x01, ODT_VAR, &ODObjs.o_6001_lowerF_VAR32_6001, NULL},
+    {0x6002, 0x01, ODT_VAR, &ODObjs.o_6002_lowerF_VAR64_6002, NULL},
+    {0x6003, 0x01, ODT_VAR, &ODObjs.o_6003_lowerF_VAR32_6003, NULL},
+    {0x6038, 0x10, ODT_ARR, &ODObjs.o_6038_lowerF_Array, NULL},
     {0x0000, 0x00, 0, NULL, NULL}
 };
 

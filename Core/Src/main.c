@@ -92,6 +92,29 @@ static void MX_USART2_UART_Init(void);
 static void MX_TIM4_Init(void);
 /* USER CODE BEGIN PFP */
 
+void CAN_interface_Test(void);
+void UART_interface_Test(void);
+void GPIO_Blink_Test(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, uint8_t Count_of_Blink, uint16_t Period_of_blink_ms);
+
+CO_SDO_abortCode_t	read_SDO	(
+								  CO_SDOclient_t* SDO_C,
+								  uint8_t nodeId,
+								  uint16_t index,
+								  uint8_t subIndex,
+								  uint8_t* buf,
+								  size_t bufSize,
+								  size_t* readSize
+								  );
+
+CO_SDO_abortCode_t	write_SDO 	(
+								CO_SDOclient_t* SDO_C,
+								uint8_t nodeId,
+								uint16_t index,
+								uint8_t subIndex,
+								uint8_t* data,
+								size_t dataSize
+								);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -105,120 +128,6 @@ HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
     }
 }
 
-CO_SDO_abortCode_t
-read_SDO (
-		  CO_SDOclient_t* SDO_C,
-		  uint8_t nodeId,
-		  uint16_t index,
-		  uint8_t subIndex,
-		  uint8_t* buf,
-		  size_t bufSize,
-		  size_t* readSize
-		  )
-{
-    CO_SDO_return_t SDO_ret;
-
-    // setup client (this can be skipped, if remote device don't change)
-    SDO_ret = CO_SDOclient_setup (
-    								SDO_C, CO_CAN_ID_SDO_CLI + nodeId,
-									CO_CAN_ID_SDO_SRV + nodeId,
-									nodeId);
-
-    if (SDO_ret != CO_SDO_RT_ok_communicationEnd) { return CO_SDO_AB_GENERAL; }
-
-
-
-    // initiate upload
-    SDO_ret = CO_SDOclientUploadInitiate ( SDO_C,
-    										index,
-											subIndex,
-											1000,
-											false);
-
-    if (SDO_ret != CO_SDO_RT_ok_communicationEnd) { return CO_SDO_AB_GENERAL; }
-
-
-
-    // upload data
-    do 	{
-        uint32_t timeDifference_us = 10000;
-        CO_SDO_abortCode_t abortCode = CO_SDO_AB_NONE;
-
-        SDO_ret = CO_SDOclientUpload(SDO_C, timeDifference_us, false, &abortCode, NULL, NULL, NULL);
-
-        if (SDO_ret < 0) {  return abortCode;  }
-
-        HAL_Delay(timeDifference_us/1000);// sleep_us(timeDifference_us);
-
-    	} while (SDO_ret > 0);
-
-
-    // copy data to the user buffer (for long data function must be called several times inside the loop)
-    *readSize = CO_SDOclientUploadBufRead(SDO_C, buf, bufSize);
-
-    return CO_SDO_AB_NONE;
-}
-
-CO_SDO_abortCode_t
-write_SDO (
-			CO_SDOclient_t* SDO_C,
-			uint8_t nodeId,
-			uint16_t index,
-			uint8_t subIndex,
-			uint8_t* data,
-			size_t dataSize
-			)
-{
-    CO_SDO_return_t SDO_ret;
-    bool_t bufferPartial = false;
-
-    // setup client (this can be skipped, if remote device is the same)
-    SDO_ret = CO_SDOclient_setup (	SDO_C,
-    								CO_CAN_ID_SDO_CLI + nodeId,
-									CO_CAN_ID_SDO_SRV + nodeId,
-									nodeId);
-
-    if (SDO_ret != CO_SDO_RT_ok_communicationEnd) { return -1; }
-
-
-
-    // initiate download
-    SDO_ret = CO_SDOclientDownloadInitiate(SDO_C, index, subIndex, dataSize, 1000, false);
-
-    if (SDO_ret != CO_SDO_RT_ok_communicationEnd) /**< Success, end of communication. SDO client: uploaded data must be read. */
-    	{ return -1; }
-
-
-
-    // fill data
-    size_t nWritten = CO_SDOclientDownloadBufWrite(SDO_C, data, dataSize);
-
-    if (nWritten < dataSize) { bufferPartial = true; } // If SDO Fifo buffer is too small, data can be refilled in the loop.
-
-
-
-
-    // download data
-    do {
-        uint32_t timeDifference_us = 10000;
-        CO_SDO_abortCode_t abortCode = CO_SDO_AB_NONE;
-
-        SDO_ret = CO_SDOclientDownload (	SDO_C,
-        									timeDifference_us,
-											false, bufferPartial,
-											&abortCode,
-											NULL,
-											NULL
-										);
-
-        if (SDO_ret < 0) {  return abortCode;}
-
-        HAL_Delay(timeDifference_us/1000); //sleep_us(timeDifference_us);
-
-       } while (SDO_ret > 0);
-
-    return CO_SDO_AB_NONE;
-}
 /* USER CODE END 0 */
 
 /**
@@ -269,39 +178,10 @@ int main(void)
    *
    */
 
-//  HAL_Delay(500);
-//  Local_Count = sizeof String_L;
-//  String_L[Local_Count-1] = 0x0d;
-//  HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)(String_L), Local_Count);
-//  while (1){}
- #if 0
-  Tx_Header.IDE    = CAN_ID_STD;
-  Tx_Header.ExtId  = 0;
-  Tx_Header.DLC    = 8;
-  Tx_Header.StdId  = 0x7EC;
-  Tx_Header.RTR    = CAN_RTR_DATA;
-  HAL_CAN_Start(&hcan1);  HAL_Delay(1500);
+  //   UART_interface_Test();
+  //  CAN_interface_Test();
 
-  if(HAL_CAN_AddTxMessage( &hcan1,
-    		               &Tx_Header,
-							Tx_Array, &TxMailbox )==HAL_OK
-  	 )
-	  {  /* Wait transmission complete */
-	  //while(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) != 3) {}
-		  for(uint8_t cnt=0;cnt<22;cnt++)
-		  {
-		   HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);//LED2_Pin//yellow
-		   HAL_Delay(46);
-		  }
-	  }
-#endif
-
-  for(uint8_t cnt=0;cnt<25;cnt++)
-  {
-	  	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7 );//LED2_Pin___//LED2_GPIO_Port//yellow
-	  	//HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6 );//LED1_Pin___//LED1_GPIO_Port//green
-  HAL_Delay(33);
-  }
+    GPIO_Blink_Test(GPIOA, GPIO_PIN_7, 25, 33);
 
    HAL_TIM_Base_Start_IT(&htim4);
 
@@ -309,7 +189,7 @@ int main(void)
    canOpenNodeSTM32.CANHandle = &hcan1;
    canOpenNodeSTM32.HWInitFunction = MX_CAN1_Init;
    canOpenNodeSTM32.timerHandle = &htim4;
-   canOpenNodeSTM32.desiredNodeID = 0x48;			//072
+   canOpenNodeSTM32.desiredNodeID = 0x3c;			//Lower__f407xx
    canOpenNodeSTM32.baudrate = 125*4;
    canopen_app_init(&canOpenNodeSTM32);
 
@@ -323,8 +203,8 @@ int main(void)
 
 	  read_SDO (
 			    canOpenNodeSTM32.canOpenStack->SDOclient,
-			  	103,										//remote desiredNodeID
-				0x6047,										//Index_of_OD_variable_at_remote_NodeID
+			  	0x3A,										//remote desiredNodeID   ALiex_Disco
+				0x6003,										//Index_of_OD_variable_at_remote_NodeID  ALiex_Disco_VAR32_6003
 				0,											//Sub_Index_of_OD_variable
 				Rx_Array,									//Saved_Received_Data
 				4,											//Number_of_Byte_to_read
@@ -337,8 +217,8 @@ int main(void)
 
 	  write_SDO(
 			    canOpenNodeSTM32.canOpenStack->SDOclient,
-			  	103,										//remote desiredNodeID
-				0x6047,										//Index_of_OD_variable_at_remote_NodeID
+			  	0x3A,										//remote desiredNodeID   ALiex_Disco
+				0x6003,										//Index_of_OD_variable_at_remote_NodeID  ALiex_Disco_VAR32_6003
 				0,											//Sub_Index_of_OD_variable
 				Array_8u,									//
 				4);
@@ -347,8 +227,8 @@ int main(void)
 
 	  read_SDO (
 			    canOpenNodeSTM32.canOpenStack->SDOclient,
-			  	103,										//remote desiredNodeID
-				0x6047,										//Index_of_OD_variable_at_remote_NodeID
+			  	0x3A,										//remote desiredNodeID   ALiex_Disco
+				0x6003,										//Index_of_OD_variable_at_remote_NodeID  ALiex_Disco_VAR32_6003
 				0,											//Sub_Index_of_OD_variable
 				Rx_Array,									//Saved_Received_Data
 				4,											//Number_of_Byte_to_read
@@ -361,7 +241,7 @@ int main(void)
       HAL_Delay(100);
 
 		Local_Count=0;
-		  OD_PERSIST_COMM.x6000_nucleo_VAR32_6000=0;
+		  OD_PERSIST_COMM.x6000_lowerF_VAR32_6000=0;
 
 		  while (1)
 		  {
@@ -383,9 +263,9 @@ int main(void)
 			  {
 				Ticks = HAL_GetTick();
 
-				OD_PERSIST_COMM.x6000_nucleo_VAR32_6000++;
+				OD_PERSIST_COMM.x6000_lowerF_VAR32_6000++;
 
-				tmp32u_0 = OD_PERSIST_COMM.x6000_nucleo_VAR32_6000;
+				tmp32u_0 = OD_PERSIST_COMM.x6000_lowerF_VAR32_6000;
 
 				//CO_TPDOsendRequest(&canOpenNodeSTM32.canOpenStack->TPDO[0] );
 
@@ -396,7 +276,7 @@ int main(void)
 				Local_Count = Local_Count%4;
 
 				if(Local_Count==0){
-									OD_PERSIST_COMM.x6038_nucleo_Array[0]++;
+									OD_PERSIST_COMM.x6038_lowerF_Array[0]++;
 								  }
 
 				CO_TPDOsendRequest(&canOpenNodeSTM32.canOpenStack->TPDO[Local_Count] );
@@ -729,6 +609,170 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+
+CO_SDO_abortCode_t
+read_SDO (
+		  CO_SDOclient_t* SDO_C,
+		  uint8_t nodeId,
+		  uint16_t index,
+		  uint8_t subIndex,
+		  uint8_t* buf,
+		  size_t bufSize,
+		  size_t* readSize
+		  )
+{
+    CO_SDO_return_t SDO_ret;
+
+    // setup client (this can be skipped, if remote device don't change)
+    SDO_ret = CO_SDOclient_setup (
+    								SDO_C, CO_CAN_ID_SDO_CLI + nodeId,
+									CO_CAN_ID_SDO_SRV + nodeId,
+									nodeId);
+
+    if (SDO_ret != CO_SDO_RT_ok_communicationEnd) { return CO_SDO_AB_GENERAL; }
+
+
+
+    // initiate upload
+    SDO_ret = CO_SDOclientUploadInitiate ( SDO_C,
+    										index,
+											subIndex,
+											1000,
+											false);
+
+    if (SDO_ret != CO_SDO_RT_ok_communicationEnd) { return CO_SDO_AB_GENERAL; }
+
+
+
+    // upload data
+    do 	{
+        uint32_t timeDifference_us = 10000;
+        CO_SDO_abortCode_t abortCode = CO_SDO_AB_NONE;
+
+        SDO_ret = CO_SDOclientUpload(SDO_C, timeDifference_us, false, &abortCode, NULL, NULL, NULL);
+
+        if (SDO_ret < 0) {  return abortCode;  }
+
+        HAL_Delay(timeDifference_us/1000);// sleep_us(timeDifference_us);
+
+    	} while (SDO_ret > 0);
+
+
+    // copy data to the user buffer (for long data function must be called several times inside the loop)
+    *readSize = CO_SDOclientUploadBufRead(SDO_C, buf, bufSize);
+
+    return CO_SDO_AB_NONE;
+}
+
+CO_SDO_abortCode_t
+write_SDO (
+			CO_SDOclient_t* SDO_C,
+			uint8_t nodeId,
+			uint16_t index,
+			uint8_t subIndex,
+			uint8_t* data,
+			size_t dataSize
+			)
+{
+    CO_SDO_return_t SDO_ret;
+    bool_t bufferPartial = false;
+
+    // setup client (this can be skipped, if remote device is the same)
+    SDO_ret = CO_SDOclient_setup (	SDO_C,
+    								CO_CAN_ID_SDO_CLI + nodeId,
+									CO_CAN_ID_SDO_SRV + nodeId,
+									nodeId);
+
+    if (SDO_ret != CO_SDO_RT_ok_communicationEnd) { return -1; }
+
+
+
+    // initiate download
+    SDO_ret = CO_SDOclientDownloadInitiate(SDO_C, index, subIndex, dataSize, 1000, false);
+
+    if (SDO_ret != CO_SDO_RT_ok_communicationEnd) /**< Success, end of communication. SDO client: uploaded data must be read. */
+    	{ return -1; }
+
+
+
+    // fill data
+    size_t nWritten = CO_SDOclientDownloadBufWrite(SDO_C, data, dataSize);
+
+    if (nWritten < dataSize) { bufferPartial = true; } // If SDO Fifo buffer is too small, data can be refilled in the loop.
+
+
+
+
+    // download data
+    do {
+        uint32_t timeDifference_us = 10000;
+        CO_SDO_abortCode_t abortCode = CO_SDO_AB_NONE;
+
+        SDO_ret = CO_SDOclientDownload (	SDO_C,
+        									timeDifference_us,
+											false, bufferPartial,
+											&abortCode,
+											NULL,
+											NULL
+										);
+
+        if (SDO_ret < 0) {  return abortCode;}
+
+        HAL_Delay(timeDifference_us/1000); //sleep_us(timeDifference_us);
+
+       } while (SDO_ret > 0);
+
+    return CO_SDO_AB_NONE;
+}
+
+
+//////////////////////////////////////////////////////////
+void CAN_interface_Test(void)
+{
+ Tx_Header.IDE    = CAN_ID_STD;
+ Tx_Header.ExtId  = 0;
+ Tx_Header.DLC    = 8;
+ Tx_Header.StdId  = 0x7EC;
+ Tx_Header.RTR    = CAN_RTR_DATA;
+ HAL_CAN_Start(&hcan1);  HAL_Delay(1500);
+
+ if(HAL_CAN_AddTxMessage( &hcan1,
+   		               	  &Tx_Header,
+						  Tx_Array, &TxMailbox )==HAL_OK
+   )
+	  {  /* Wait transmission complete */
+	  //while(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) != 3) {}
+		  for(uint8_t cnt=0;cnt<22;cnt++)
+		  {
+		   HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);//LED2_Pin//yellow
+		   HAL_Delay(46);
+		  }
+	  }
+}
+
+///////////////////////////////////////////////////
+void UART_interface_Test(void)
+{
+	  HAL_Delay(500);
+	  Local_Count = sizeof String_L;
+	  String_L[Local_Count-1] = 0x0d;
+	  HAL_UART_Transmit_DMA( &TerminalInterface, (uint8_t*)(String_L), Local_Count);
+	  while (1){}
+}
+//////////////////////////////////////////////
+
+void GPIO_Blink_Test(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, uint8_t Count_of_Blink, uint16_t Period_of_blink_ms)
+{
+	  for(uint8_t cnt=0;cnt<Count_of_Blink;cnt++)
+	  {
+		  	HAL_GPIO_TogglePin(GPIOx, GPIO_Pin );//LED2_Pin___//LED2_GPIO_Port//yellow
+		  	//HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6 );//LED1_Pin___//LED1_GPIO_Port//green
+	  HAL_Delay(Period_of_blink_ms);
+	  }
+}
+
+
 
 /* USER CODE END 4 */
 

@@ -16,12 +16,12 @@
 
         Created:      23.11.2020 16:00:00
         Created By:   
-        Modified:     01.11.2024 19:54:43
+        Modified:     01.11.2024 19:59:06
         Modified By:  
 
     Device Info:
         Vendor Name:  Chromos_A
-        Vendor ID:    0xAFFEFFd
+        Vendor ID:    0xAFFEAFFd
         Product Name: Lower__f407xx
         Product ID:   0x3c
 
@@ -331,12 +331,12 @@ typedef struct {
         uint32_t applicationObject7;
         uint32_t applicationObject8;
     } x1A0B_TPDOMappingParameter;
-    uint32_t x6000_nucleo_VAR32_6000;
-    uint32_t x6001_nucleo_VAR32_6001;
-    uint64_t x6002_nucleo_VAR64_6002;
-    uint32_t x6003_nucleo_VAR32_6003;
-    uint8_t x6038_nucleo_Array_sub0;
-    uint16_t x6038_nucleo_Array[OD_CNT_ARR_6038];
+    uint32_t x6000_lowerF_VAR32_6000;
+    uint32_t x6001_lowerF_VAR32_6001;
+    uint64_t x6002_lowerF_VAR64_6002;
+    uint32_t x6003_lowerF_VAR32_6003;
+    uint8_t x6038_lowerF_Array_sub0;
+    uint16_t x6038_lowerF_Array[OD_CNT_ARR_6038];
 } OD_PERSIST_COMM_t;
 
 typedef struct {
@@ -467,11 +467,11 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H1A09_TPDOMappingParameter &OD->list[40]
 #define OD_ENTRY_H1A0A_TPDOMappingParameter &OD->list[41]
 #define OD_ENTRY_H1A0B_TPDOMappingParameter &OD->list[42]
-#define OD_ENTRY_H6000_nucleo_VAR32_6000 &OD->list[43]
-#define OD_ENTRY_H6001_nucleo_VAR32_6001 &OD->list[44]
-#define OD_ENTRY_H6002_nucleo_VAR64_6002 &OD->list[45]
-#define OD_ENTRY_H6003_nucleo_VAR32_6003 &OD->list[46]
-#define OD_ENTRY_H6038_nucleo_Array &OD->list[47]
+#define OD_ENTRY_H6000_lowerF_VAR32_6000 &OD->list[43]
+#define OD_ENTRY_H6001_lowerF_VAR32_6001 &OD->list[44]
+#define OD_ENTRY_H6002_lowerF_VAR64_6002 &OD->list[45]
+#define OD_ENTRY_H6003_lowerF_VAR32_6003 &OD->list[46]
+#define OD_ENTRY_H6038_lowerF_Array &OD->list[47]
 
 
 /*******************************************************************************
